@@ -20,7 +20,7 @@ export default function MediaLibrary() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: mediaFiles, isLoading } = useQuery<MediaFile[]>({
+  const { data: mediaFiles = [], isLoading } = useQuery<MediaFile[]>({
     queryKey: ['/api/media'],
   });
 

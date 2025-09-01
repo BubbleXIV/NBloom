@@ -12,16 +12,16 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Plus, Pencil, Trash2, UtensilsCrossed, Coffee, Cake } from "lucide-react";
 import type { MenuItem, InsertMenuItem } from "@shared/schema";
+import ImageUpload from "@/components/ui/image-upload";
 
 export default function MenuManagement() {
-  const allItems = menuItems || [];
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [itemForm, setItemForm] = useState<Partial<InsertMenuItem>>({
     name: "",
     description: "",
     price: 0,
-    category: "drinks",
+    // category: "drinks", // REMOVE this line
     ingredients: [],
     image: "",
     isAvailable: true,
@@ -32,7 +32,7 @@ export default function MenuManagement() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: menuItems, isLoading } = useQuery<MenuItem[]>({
+  const { data: menuItems = [], isLoading } = useQuery<MenuItem[]>({
     queryKey: ['/api/menu'],
   });
 
@@ -139,12 +139,6 @@ export default function MenuManagement() {
 
   const allItems = menuItems || [];
 
-  const categories = [
-    { id: "drinks", label: "Beverages", icon: Coffee, color: "text-blue-500" },
-    { id: "food", label: "Food", icon: UtensilsCrossed, color: "text-green-500" },
-    { id: "desserts", label: "Desserts", icon: Cake, color: "text-pink-500" }
-  ];
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -183,19 +177,6 @@ export default function MenuManagement() {
                     data-testid="input-item-name"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <Select value={itemForm.category} onValueChange={(value) => setItemForm(prev => ({ ...prev, category: value }))}>
-                    <SelectTrigger data-testid="select-item-category">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="drinks">Beverages</SelectItem>
-                      <SelectItem value="food">Food</SelectItem>
-                      <SelectItem value="desserts">Desserts</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
@@ -229,15 +210,11 @@ export default function MenuManagement() {
                   />
                 </div>
               </div>
-              <div>
-                <Label htmlFor="image">Image URL</Label>
-                <Input
-                  id="image"
-                  value={itemForm.image || ""}
-                  onChange={(e) => setItemForm(prev => ({ ...prev, image: e.target.value }))}
-                  data-testid="input-item-image"
-                />
-              </div>
+              <ImageUpload
+                value={itemForm.image || ""}
+                onChange={(value) => setItemForm(prev => ({ ...prev, image: value }))}
+                label="Menu Item Image"
+              />
               <div>
                 <Label>Ingredients</Label>
                 <div className="flex space-x-2 mb-2">
@@ -269,7 +246,7 @@ export default function MenuManagement() {
 
       {/* Menu Items Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categoryItems.map((item) => (
+        {allItems.map((item) => (
           <Card key={item.id} className="group hover:shadow-lg transition-shadow" data-testid={`card-menu-item-${item.id}`}>
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">

@@ -1,15 +1,91 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+import Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
+console.log('Using in-memory storage for development');
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
+// Create in-memory SQLite database for local development
+const sqlite = new Database(':memory:');
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+// Enable foreign keys
+sqlite.pragma('foreign_keys = ON');
+
+export const db = drizzle(sqlite, { schema });
+
+// Initialize tables
+import { users, pages, staffMembers, altCharacters, menuItems, mediaFiles } from "@shared/schema";
+
+// Create tables
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT DEFAULT 'user',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS pages (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    content TEXT,
+    published BOOLEAN DEFAULT false,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS staff_members (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL,
+    department TEXT NOT NULL,
+    bio TEXT,
+    image TEXT,
+    is_active BOOLEAN DEFAULT true,
+    sort_order INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS alt_characters (
+    id TEXT PRIMARY KEY,
+    staff_member_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    race TEXT,
+    server TEXT,
+    image TEXT,
+    sort_order INTEGER DEFAULT 0,
+    FOREIGN KEY (staff_member_id) REFERENCES staff_members(id) ON DELETE CASCADE
+  )
+`);
+
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS menu_items (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    price REAL,
+    category TEXT NOT NULL,
+    image TEXT,
+    is_available BOOLEAN DEFAULT true,
+    sort_order INTEGER DEFAULT 0
+  )
+`);
+
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS media_files (
+    id TEXT PRIMARY KEY,
+    filename TEXT NOT NULL,
+    original_name TEXT NOT NULL,
+    url TEXT NOT NULL,
+    type TEXT NOT NULL,
+    size INTEGER DEFAULT 0,
+    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);

@@ -24,6 +24,7 @@ export async function apiRequest(
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
+
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
@@ -38,7 +39,20 @@ export const getQueryFn: <T>(options: {
     }
 
     await throwIfResNotOk(res);
-    return await res.json();
+
+    // Handle 304 responses properly
+    if (res.status === 304) {
+      return []; // Return empty array for 304 responses
+    }
+
+    const data = await res.json();
+
+    // Ensure we always return an array for pages endpoints
+    if (queryKey.includes('/api/admin/pages') || queryKey.includes('/api/pages')) {
+      return Array.isArray(data) ? data : [];
+    }
+
+    return data;
   };
 
 export const queryClient = new QueryClient({
@@ -47,7 +61,7 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      staleTime: 5 * 60 * 1000, // 5 minutes instead of Infinity
       retry: false,
     },
     mutations: {

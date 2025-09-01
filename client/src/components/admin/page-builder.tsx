@@ -15,7 +15,7 @@ export default function PageBuilder() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: pages } = useQuery<Page[]>({
+  const { data: pages = [] } = useQuery<Page[]>({
     queryKey: ['/api/admin/pages'],
   });
 
@@ -60,11 +60,12 @@ export default function PageBuilder() {
   };
 
 const addComponent = (component: PageComponent) => {
+  // Remove any artificial limits
   setPageContent(prev => ({
     ...prev,
     components: [...prev.components, {
       ...component,
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}` // More unique IDs
+      id: `component-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     }]
   }));
 };
@@ -105,7 +106,7 @@ const addComponent = (component: PageComponent) => {
               <SelectValue placeholder="Select a page" />
             </SelectTrigger>
             <SelectContent>
-              {pages?.map((page) => (
+              {(pages || []).map((page) => (
                 <SelectItem key={page.id} value={page.id}>
                   {page.title}
                 </SelectItem>

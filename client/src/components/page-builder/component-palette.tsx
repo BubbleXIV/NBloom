@@ -13,7 +13,7 @@ export default function ComponentPalette({ onAddComponent }: ComponentPalettePro
     { type: 'divider', label: 'Divider', icon: 'fas fa-grip-lines' },
     { type: 'grid', label: 'Grid Layout', icon: 'fas fa-th' },
     { type: 'video', label: 'Video', icon: 'fas fa-play' },
-    { type: 'quote', label: 'Quote', icon: 'fas fa-quote-left' },
+    { type: 'quote', label: 'Quote', icon: 'fas fa-quote-left' }
   ];
 
   const sectionComponents = [
@@ -53,30 +53,31 @@ export default function ComponentPalette({ onAddComponent }: ComponentPalettePro
           content: { text: 'Click me', href: '#' },
           style: { variant: 'primary', size: 'default' }
         };
-      case 'divider':
-        return {
-          ...baseComponent,
-          content: { style: 'solid' },
-          style: {
-            color: 'border-border',
-            thickness: '1px'
-            margin: '20px 0'
-           }
-       };
-      case 'grid':
-  return {
-    ...baseComponent,
-    content: {
-      columns: 2,
-      gap: '16px'
-    },
-    children: [],
-    style: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
-      gap: '16px'
-    }
-  };
+    case 'divider':
+      return {
+        ...baseComponent,
+        content: { style: 'solid' },
+        style: {
+          color: 'border-border',
+          thickness: '1px',
+          margin: '20px 0'
+        }
+      };
+
+    case 'grid':
+      return {
+        ...baseComponent,
+        content: {
+          columns: 2,
+          gap: '16px'
+        },
+        children: [],
+        style: {
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '16px'
+        }
+      };
       case 'hero':
         return {
           ...baseComponent,

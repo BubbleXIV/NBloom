@@ -63,6 +63,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.error('Error creating default admin user:', error);
   }
 
+  // Create default pages if they don't exist
+try {
+  const existingPages = await storage.getPages();
+  if (existingPages.length === 0) {
+    // Create default pages
+    const defaultPages = [
+      { title: 'Home', slug: 'home', content: '{"components":[]}', published: true },
+      { title: 'Services', slug: 'services', content: '{"components":[]}', published: true },
+      { title: 'Menu', slug: 'menu', content: '{"components":[]}', published: true },
+      { title: 'Staff', slug: 'staff', content: '{"components":[]}', published: true },
+      { title: 'Contact', slug: 'contact', content: '{"components":[]}', published: true }
+    ];
+
+    for (const page of defaultPages) {
+      await storage.createPage(page);
+    }
+    console.log('Created default pages');
+  }
+} catch (error) {
+  console.error('Error creating default pages:', error);
+}
+
   // Auth middleware
   const requireAuth = (req: any, res: any, next: any) => {
     if (!req.session.userId) {

@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Pencil, Trash2, Plus, Users, UserPlus } from "lucide-react";
 import type { StaffMember, AltCharacter, InsertStaffMember, InsertAltCharacter } from "@shared/schema";
+import ImageUpload from "@/components/ui/image-upload";
 
 interface StaffMemberWithAlts extends StaffMember {
   altCharacters?: AltCharacter[];
@@ -42,33 +43,11 @@ export default function StaffManagement() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: staffMembers, isLoading } = useQuery<StaffMember[]>({
+  const { data: staffMembers = [], isLoading } = useQuery<StaffMember[]>({
     queryKey: ['/api/staff'],
   });
 
   const [showingAltsFor, setShowingAltsFor] = useState<string | null>(null);
-
-  const handleSubmitAlt = (e: React.FormEvent) => {
-  e.preventDefault();
-  if (addingAltFor) {
-    const staff = staffMembers?.find(s => s.id === addingAltFor);
-    const currentAlts = (staff as any)?.altCharacters?.length || 0;
-
-    if (currentAlts >= 10) {
-      toast({
-        title: "Error",
-        description: "Maximum of 10 alt characters allowed per staff member",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    createAltMutation.mutate({
-      staffId: addingAltFor,
-      data: { ...altForm, staffMemberId: addingAltFor } as InsertAltCharacter
-    });
-  }
-};
 
   const createStaffMutation = useMutation({
     mutationFn: async (data: InsertStaffMember) => {
@@ -188,15 +167,6 @@ export default function StaffManagement() {
     }
   };
 
-  const handleSubmitAlt = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (addingAltFor) {
-      createAltMutation.mutate({ 
-        staffId: addingAltFor, 
-        data: { ...altForm, staffMemberId: addingAltFor } as InsertAltCharacter 
-      });
-    }
-  };
 
 const filteredStaff = staffMembers?.filter(staff => {
   return staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -251,17 +221,13 @@ const filteredStaff = staffMembers?.filter(staff => {
                 />
               </div>
               <div>
-                <Label htmlFor="department">Department</Label>
-                <Select value={staffForm.department} onValueChange={(value) => setStaffForm(prev => ({ ...prev, department: value }))}>
-                  <SelectTrigger data-testid="select-staff-department">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="management">Management</SelectItem>
-                    <SelectItem value="entertainment">Entertainment</SelectItem>
-                    <SelectItem value="service">Service</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="department">Department (Auto-assigned by Role)</Label>
+                <Input
+                  id="department"
+                  value={staffForm.department || "management"}
+                  disabled
+                  className="bg-muted"
+                />
               </div>
               <div>
                 <Label htmlFor="bio">Bio</Label>
@@ -272,15 +238,11 @@ const filteredStaff = staffMembers?.filter(staff => {
                   data-testid="input-staff-bio"
                 />
               </div>
-              <div>
-                <Label htmlFor="image">Image URL</Label>
-                <Input
-                  id="image"
-                  value={staffForm.image || ""}
-                  onChange={(e) => setStaffForm(prev => ({ ...prev, image: e.target.value }))}
-                  data-testid="input-staff-image"
-                />
-              </div>
+              <ImageUpload
+                value={staffForm.image || ""}
+                onChange={(value) => setStaffForm(prev => ({ ...prev, image: value }))}
+                label="Character Image"
+              />
               <div>
                 <Label htmlFor="sortOrder">Sort Order</Label>
                 <Input
