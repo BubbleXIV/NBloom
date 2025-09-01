@@ -19,7 +19,7 @@ export function ImageInput({ value, onChange, label }: ImageInputProps) {
     formData.append('file', file);
 
     try {
-      const response = await fetch('/api/admin/upload', {
+      const response = await fetch('/api/admin/media/upload', {
         method: 'POST',
         body: formData,
       });
@@ -66,3 +66,5 @@ export function ImageInput({ value, onChange, label }: ImageInputProps) {
     </div>
   );
 }
+
+export default ImageInput;

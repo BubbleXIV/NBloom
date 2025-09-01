@@ -93,56 +93,252 @@ export const convertServicesPageToComponents = (): PageContent => {
   return {
     components: [
       {
-        id: "services-hero",
-        type: "hero",
+        id: "services-title",
+        type: "heading",
         content: {
-          title: "Our Services",
-          subtitle: "Comprehensive event and hospitality services tailored to make your gathering unforgettable.",
-          backgroundImage: "",
-          buttons: []
+          text: "Our Services",
+          level: 1
         },
         style: {
-          minHeight: "50vh",
-          backgroundColor: "linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #0F0F0F 100%)"
+          textAlign: "center",
+          color: "text-foreground",
+          marginBottom: "24px"
         }
       },
       {
-        id: "services-grid",
-        type: "grid",
+        id: "services-subtitle",
+        type: "text",
         content: {
-          columns: 2,
-          gap: "32px"
+          text: "Comprehensive event and hospitality services tailored to make your gathering unforgettable."
         },
-        children: [
-          {
-            id: "service-1",
-            type: "text",
-            content: {
-              text: "**Event Planning**\n\nFrom intimate gatherings to grand celebrations, our experienced team handles every detail of your event planning needs.\n\n• Custom event design and theming\n• Coordinated entertainment scheduling\n• Guest management and invitations\n• Photography and documentation"
-            }
-          },
-          {
-            id: "service-2",
-            type: "text",
-            content: {
-              text: "**Entertainment**\n\nProfessional performers and entertainment options to elevate your gathering with memorable experiences.\n\n• Live musical performances\n• Dancing and choreography\n• Interactive games and activities\n• Themed entertainment packages"
-            }
-          },
-          {
-            id: "service-3",
-            type: "text",
-            content: {
-              text: "**Hospitality Services**\n\nExceptional service and attention to detail ensuring every guest feels welcome and cared for.\n\n• Personal host assignments\n• Welcome services and orientation\n• Customized guest experiences\n• 24/7 support during events"
-            }
-          },
-          {
-            id: "service-4",
-            type: "text",
-            content: {
-              text: "**Corporate Events**\n\nProfessional business gatherings, free company meetings, and corporate celebrations in an elegant setting.\n\n• Business meeting facilities\n• Corporate celebration packages\n• Team building activities\n• Professional networking events"
-            }
-          }
-        ]
+        style: {
+          textAlign: "center",
+          color: "text-muted-foreground",
+          fontSize: "xl",
+          marginBottom: "80px"
+        }
+      },
+      {
+        id: "service-event-planning",
+        type: "service-card",
+        content: {
+          icon: "fas fa-calendar-check",
+          title: "Event Planning",
+          description: "From intimate gatherings to grand celebrations, our experienced team handles every detail of your event planning needs.",
+          features: [
+            "Custom event design and theming",
+            "Coordinated entertainment scheduling",
+            "Guest management and invitations",
+            "Photography and documentation"
+          ]
+        }
+      },
+      {
+        id: "service-entertainment",
+        type: "service-card",
+        content: {
+          icon: "fas fa-music",
+          title: "Entertainment",
+          description: "Professional performers and entertainment options to elevate your gathering with memorable experiences.",
+          features: [
+            "Live musical performances",
+            "Dancing and choreography",
+            "Interactive games and activities",
+            "Themed entertainment packages"
+          ]
+        }
+      },
+      {
+        id: "service-hospitality",
+        type: "service-card",
+        content: {
+          icon: "fas fa-concierge-bell",
+          title: "Hospitality Services",
+          description: "Exceptional service and attention to detail ensuring every guest feels welcome and cared for.",
+          features: [
+            "Personal host assignments",
+            "Welcome services and orientation",
+            "Customized guest experiences",
+            "24/7 support during events"
+          ]
+        }
+      },
+      {
+        id: "service-corporate",
+        type: "service-card",
+        content: {
+          icon: "fas fa-handshake",
+          title: "Corporate Events",
+          description: "Professional business gatherings, free company meetings, and corporate celebrations in an elegant setting.",
+          features: [
+            "Business meeting facilities",
+            "Corporate celebration packages",
+            "Team building activities",
+            "Professional networking events"
+          ]
+        }
+      },
+      {
+        id: "packages-title",
+        type: "heading",
+        content: {
+          text: "Service Packages",
+          level: 2
+        },
+        style: {
+          textAlign: "center",
+          marginTop: "80px",
+          marginBottom: "24px"
+        }
+      },
+      {
+        id: "packages-subtitle",
+        type: "text",
+        content: {
+          text: "Choose the perfect package for your event needs"
+        },
+        style: {
+          textAlign: "center",
+          color: "text-muted-foreground",
+          fontSize: "xl",
+          marginBottom: "48px"
+        }
+      },
+      {
+        id: "package-essential",
+        type: "pricing-card",
+        content: {
+          name: "Essential",
+          price: "50,000 gil",
+          features: [
+            "Basic venue rental (3 hours)",
+            "Standard decorations",
+            "Basic refreshments",
+            "Host services"
+          ],
+          popular: false
+        }
+      },
+      {
+        id: "package-premium",
+        type: "pricing-card",
+        content: {
+          name: "Premium",
+          price: "120,000 gil",
+          features: [
+            "Extended venue rental (6 hours)",
+            "Custom decorations",
+            "Full menu service",
+            "Entertainment coordination",
+            "Professional photography"
+          ],
+          popular: true
+        }
+      },
+      {
+        id: "package-luxury",
+        type: "pricing-card",
+        content: {
+          name: "Luxury",
+          price: "300,000 gil",
+          features: [
+            "All-day venue access",
+            "Bespoke event design",
+            "Premium menu & drinks",
+            "Full entertainment program",
+            "Dedicated event manager",
+            "Complete documentation"
+          ],
+          popular: false
+        }
+      }
+    ]
+  };
+};
+
+export const convertMenuPageToComponents = (): PageContent => {
+  return {
+    components: [
+      {
+        id: "menu-title",
+        type: "heading",
+        content: {
+          text: "Our Menu",
+          level: 1
+        },
+        style: {
+          textAlign: "center",
+          marginBottom: "24px"
+        }
+      },
+      {
+        id: "menu-subtitle",
+        type: "text",
+        content: {
+          text: "Exquisite dishes and beverages crafted for the discerning adventurer"
+        },
+        style: {
+          textAlign: "center",
+          color: "text-muted-foreground",
+          fontSize: "xl",
+          marginBottom: "80px"
+        }
+      },
+      {
+        id: "menu-note",
+        type: "text",
+        content: {
+          text: "Menu items will be managed through the Menu Management section. This page serves as the display for your curated menu offerings."
+        },
+        style: {
+          textAlign: "center",
+          color: "text-muted-foreground",
+          fontStyle: "italic"
+        }
+      }
+    ]
+  };
+};
+
+export const convertStaffPageToComponents = (): PageContent => {
+  return {
+    components: [
+      {
+        id: "staff-title",
+        type: "heading",
+        content: {
+          text: "Our Staff",
+          level: 1
+        },
+        style: {
+          textAlign: "center",
+          marginBottom: "24px"
+        }
+      },
+      {
+        id: "staff-subtitle",
+        type: "text",
+        content: {
+          text: "Meet our dedicated team of professionals who make every event exceptional"
+        },
+        style: {
+          textAlign: "center",
+          color: "text-muted-foreground",
+          fontSize: "xl",
+          marginBottom: "80px"
+        }
+      },
+      {
+        id: "staff-note",
+        type: "text",
+        content: {
+          text: "Staff members will be managed through the Staff Management section. This page serves as the display for your team profiles."
+        },
+        style: {
+          textAlign: "center",
+          color: "text-muted-foreground",
+          fontStyle: "italic"
+        }
       }
     ]
   };
@@ -159,13 +355,41 @@ export const convertAboutPageToComponents = (): PageContent => {
           subtitle: "Learn more about our venue and what makes us special",
           backgroundImage: "",
           buttons: []
+        },
+        style: {
+          minHeight: "50vh"
         }
       },
       {
-        id: "about-content",
+        id: "about-content-1",
         type: "text",
         content: {
-          text: "Welcome to The Golden Chocobo, an premier FFXIV venue dedicated to creating exceptional experiences for adventurers from across all worlds and data centers.\n\nOur venue specializes in hosting elegant events, from intimate gatherings to grand celebrations. We pride ourselves on attention to detail, professional service, and creating memorable moments that our guests will treasure.\n\nWhether you're planning a wedding, corporate event, or social gathering, our experienced team is here to make your vision a reality."
+          text: "Welcome to The Golden Chocobo, a premier FFXIV venue dedicated to creating exceptional experiences for adventurers from across all worlds and data centers."
+        },
+        style: {
+          fontSize: "lg",
+          marginBottom: "32px"
+        }
+      },
+      {
+        id: "about-content-2",
+        type: "text",
+        content: {
+          text: "Our venue specializes in hosting elegant events, from intimate gatherings to grand celebrations. We pride ourselves on attention to detail, professional service, and creating memorable moments that our guests will treasure."
+        },
+        style: {
+          fontSize: "lg",
+          marginBottom: "32px"
+        }
+      },
+      {
+        id: "about-content-3",
+        type: "text",
+        content: {
+          text: "Whether you're planning a wedding, corporate event, or social gathering, our experienced team is here to make your vision a reality."
+        },
+        style: {
+          fontSize: "lg"
         }
       }
     ]

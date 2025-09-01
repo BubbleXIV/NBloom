@@ -20,6 +20,8 @@ export default function ComponentPalette({ onAddComponent }: ComponentPalettePro
     { type: 'hero', label: 'Hero Section', icon: 'fas fa-star' },
     { type: 'features', label: 'Feature Grid', icon: 'fas fa-columns' },
     { type: 'testimonials', label: 'Testimonials', icon: 'fas fa-comments' },
+    { type: 'service-card', label: 'Service Card', icon: 'fas fa-concierge-bell' },
+    { type: 'pricing-card', label: 'Pricing Card', icon: 'fas fa-tag' },
   ];
 
   const createComponent = (type: string): PageComponent => {
@@ -86,6 +88,34 @@ export default function ComponentPalette({ onAddComponent }: ComponentPalettePro
             subtitle: 'Hero subtitle text',
             backgroundImage: '',
             buttons: []
+          }
+        };
+      case 'service-card':
+        return {
+          ...baseComponent,
+          content: {
+            icon: 'fas fa-star',
+            title: 'Service Title',
+            description: 'Service description goes here...',
+            features: [
+              'Feature 1',
+              'Feature 2',
+              'Feature 3'
+            ]
+          }
+        };
+      case 'pricing-card':
+        return {
+          ...baseComponent,
+          content: {
+            name: 'Package Name',
+            price: '100 gil',
+            features: [
+              'Feature 1',
+              'Feature 2',
+              'Feature 3'
+            ],
+            popular: false
           }
         };
       default:

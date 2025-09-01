@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Pencil, Trash2, Plus, Users, UserPlus } from "lucide-react";
 import type { StaffMember, AltCharacter, InsertStaffMember, InsertAltCharacter } from "@shared/schema";
-import ImageUpload from "@/components/ui/image-upload";
+import ImageInput from "@/components/ui/image-input";
 
 interface StaffMemberWithAlts extends StaffMember {
   altCharacters?: AltCharacter[];
@@ -237,7 +237,7 @@ const filteredStaff = staffMembers?.filter(staff => {
                   data-testid="input-staff-bio"
                 />
               </div>
-              <ImageUpload
+              <ImageInput
                 value={staffForm.image || ""}
                 onChange={(value) => setStaffForm(prev => ({ ...prev, image: value }))}
                 label="Character Image"

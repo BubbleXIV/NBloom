@@ -256,6 +256,58 @@ export default function EditableComponent({
           </section>
         );
 
+      case 'service-card':
+        return (
+          <div className="card-hover bg-card border border-border rounded-xl p-8">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center mr-4">
+                <i className={`${component.content?.icon || 'fas fa-star'} text-primary-foreground text-xl`}></i>
+              </div>
+              <h3 className="font-display text-2xl font-semibold text-foreground">
+                {component.content?.title || 'Service Title'}
+              </h3>
+            </div>
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              {component.content?.description || 'Service description'}
+            </p>
+            <ul className="space-y-3 text-muted-foreground">
+              {(component.content?.features || []).map((feature: string, index: number) => (
+                <li key={index} className="flex items-center">
+                  <i className="fas fa-check text-primary mr-3"></i>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+
+      case 'pricing-card':
+        return (
+          <div className={`bg-card rounded-xl p-8 text-center relative ${
+            component.content?.popular ? 'border-2 border-primary' : 'border border-border'
+          }`}>
+            {component.content?.popular && (
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
+                Most Popular
+              </div>
+            )}
+            <h3 className="font-display text-2xl font-semibold text-foreground mb-4">
+              {component.content?.name || 'Package Name'}
+            </h3>
+            <div className="text-4xl font-bold text-primary mb-6">
+              {component.content?.price || '0 gil'}
+            </div>
+            <ul className="space-y-3 text-muted-foreground mb-8">
+              {(component.content?.features || []).map((feature: string, featureIndex: number) => (
+                <li key={featureIndex}>{feature}</li>
+              ))}
+            </ul>
+            <button className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors">
+              Select Package
+            </button>
+          </div>
+        );
+
       default:
         return (
           <div className="p-4 border border-dashed border-border rounded-lg text-center">
@@ -492,6 +544,115 @@ export default function EditableComponent({
                   })}
                   data-testid="input-quote-author"
                 />
+              </div>
+            </>
+          )}
+
+          {component.type === 'service-card' && (
+            <>
+              <div>
+                <Label htmlFor="service-icon">Icon Class</Label>
+                <Input
+                  id="service-icon"
+                  value={component.content?.icon || ''}
+                  onChange={(e) => onUpdate({
+                    content: { ...component.content, icon: e.target.value }
+                  })}
+                  placeholder="fas fa-star"
+                  data-testid="input-service-icon"
+                />
+              </div>
+              <div>
+                <Label htmlFor="service-title">Title</Label>
+                <Input
+                  id="service-title"
+                  value={component.content?.title || ''}
+                  onChange={(e) => onUpdate({
+                    content: { ...component.content, title: e.target.value }
+                  })}
+                  data-testid="input-service-title"
+                />
+              </div>
+              <div>
+                <Label htmlFor="service-description">Description</Label>
+                <Textarea
+                  id="service-description"
+                  value={component.content?.description || ''}
+                  onChange={(e) => onUpdate({
+                    content: { ...component.content, description: e.target.value }
+                  })}
+                  rows={3}
+                  data-testid="input-service-description"
+                />
+              </div>
+              <div>
+                <Label htmlFor="service-features">Features (one per line)</Label>
+                <Textarea
+                  id="service-features"
+                  value={(component.content?.features || []).join('\n')}
+                  onChange={(e) => onUpdate({
+                    content: {
+                      ...component.content,
+                      features: e.target.value.split('\n').filter(f => f.trim())
+                    }
+                  })}
+                  rows={4}
+                  data-testid="input-service-features"
+                />
+              </div>
+            </>
+          )}
+
+          {component.type === 'pricing-card' && (
+            <>
+              <div>
+                <Label htmlFor="package-name">Package Name</Label>
+                <Input
+                  id="package-name"
+                  value={component.content?.name || ''}
+                  onChange={(e) => onUpdate({
+                    content: { ...component.content, name: e.target.value }
+                  })}
+                  data-testid="input-package-name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="package-price">Price</Label>
+                <Input
+                  id="package-price"
+                  value={component.content?.price || ''}
+                  onChange={(e) => onUpdate({
+                    content: { ...component.content, price: e.target.value }
+                  })}
+                  data-testid="input-package-price"
+                />
+              </div>
+              <div>
+                <Label htmlFor="package-features">Features (one per line)</Label>
+                <Textarea
+                  id="package-features"
+                  value={(component.content?.features || []).join('\n')}
+                  onChange={(e) => onUpdate({
+                    content: {
+                      ...component.content,
+                      features: e.target.value.split('\n').filter(f => f.trim())
+                    }
+                  })}
+                  rows={4}
+                  data-testid="input-package-features"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="package-popular"
+                  checked={component.content?.popular || false}
+                  onChange={(e) => onUpdate({
+                    content: { ...component.content, popular: e.target.checked }
+                  })}
+                  data-testid="checkbox-package-popular"
+                />
+                <Label htmlFor="package-popular">Mark as Popular</Label>
               </div>
             </>
           )}

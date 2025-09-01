@@ -179,10 +179,19 @@ try {
 
   app.put('/api/admin/pages/:id', requireAuth, async (req, res) => {
     try {
-      const pageData = insertPageSchema.partial().parse(req.body);
+      // More flexible validation - allow any content structure for page updates
+      const { title, slug, content, published } = req.body;
+      const pageData: any = {};
+
+      if (title !== undefined) pageData.title = title;
+      if (slug !== undefined) pageData.slug = slug;
+      if (content !== undefined) pageData.content = content;
+      if (published !== undefined) pageData.published = published;
+
       const page = await storage.updatePage(req.params.id, pageData);
       res.json(page);
     } catch (error) {
+      console.error('Page update error:', error);
       res.status(400).json({ message: 'Invalid page data' });
     }
   });

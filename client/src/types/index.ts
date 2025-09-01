@@ -1,6 +1,6 @@
 export interface PageComponent {
   id: string;
-  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'grid' | 'video' | 'quote' | 'hero' | 'features' | 'testimonials';
+  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'grid' | 'video' | 'quote' | 'hero' | 'features' | 'testimonials' | 'service-card' | 'pricing-card' | 'navbar' | 'footer';
   content?: any;
   style?: any;
   children?: PageComponent[];

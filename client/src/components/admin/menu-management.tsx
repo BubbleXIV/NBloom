@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Plus, Pencil, Trash2, UtensilsCrossed, Coffee, Cake } from "lucide-react";
 import type { MenuItem, InsertMenuItem } from "@shared/schema";
-import ImageUpload from "@/components/ui/image-upload";
+import ImageInput from "@/components/ui/image-input";
 
 export default function MenuManagement() {
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -211,7 +211,7 @@ export default function MenuManagement() {
                   />
                 </div>
               </div>
-              <ImageUpload
+              <ImageInput
                 value={itemForm.image || ""}
                 onChange={(value) => setItemForm(prev => ({ ...prev, image: value }))}
                 label="Menu Item Image"
