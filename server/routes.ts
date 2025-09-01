@@ -358,6 +358,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/admin/pages/convert-default/:slug', async (req, res) => {
+  const { slug } = req.params;
+  // Logic to convert hardcoded pages to database entries
+});
+
   app.delete('/api/admin/media/:id', requireAuth, async (req, res) => {
     try {
       await storage.deleteMediaFile(req.params.id);

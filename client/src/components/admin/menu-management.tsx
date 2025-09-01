@@ -14,7 +14,7 @@ import { Plus, Pencil, Trash2, UtensilsCrossed, Coffee, Cake } from "lucide-reac
 import type { MenuItem, InsertMenuItem } from "@shared/schema";
 
 export default function MenuManagement() {
-  const [activeCategory, setActiveCategory] = useState<string>("drinks");
+  const allItems = menuItems || [];
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [itemForm, setItemForm] = useState<Partial<InsertMenuItem>>({
@@ -137,7 +137,7 @@ export default function MenuManagement() {
 
   const formatPrice = (price: number) => `${price.toLocaleString()} gil`;
 
-  const categoryItems = menuItems?.filter(item => item.category === activeCategory) || [];
+  const allItems = menuItems || [];
 
   const categories = [
     { id: "drinks", label: "Beverages", icon: Coffee, color: "text-blue-500" },
@@ -265,26 +265,6 @@ export default function MenuManagement() {
             </form>
           </DialogContent>
         </Dialog>
-      </div>
-
-      {/* Category Tabs */}
-      <div className="flex space-x-4 mb-6">
-        {categories.map((category) => {
-          const Icon = category.icon;
-          return (
-            <Button
-              key={category.id}
-              variant={activeCategory === category.id ? "default" : "outline"}
-              onClick={() => setActiveCategory(category.id)}
-              className="flex items-center space-x-2"
-              data-testid={`button-category-${category.id}`}
-            >
-              <Icon className={`w-4 h-4 ${category.color}`} />
-              <span>{category.label}</span>
-              <Badge variant="secondary">{menuItems?.filter(item => item.category === category.id).length || 0}</Badge>
-            </Button>
-          );
-        })}
       </div>
 
       {/* Menu Items Grid */}

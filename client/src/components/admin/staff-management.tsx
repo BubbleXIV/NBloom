@@ -19,7 +19,6 @@ interface StaffMemberWithAlts extends StaffMember {
 
 export default function StaffManagement() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [departmentFilter, setDepartmentFilter] = useState("all");
   const [isAddingStaff, setIsAddingStaff] = useState(false);
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
   const [addingAltFor, setAddingAltFor] = useState<string | null>(null);
@@ -46,6 +45,30 @@ export default function StaffManagement() {
   const { data: staffMembers, isLoading } = useQuery<StaffMember[]>({
     queryKey: ['/api/staff'],
   });
+
+  const [showingAltsFor, setShowingAltsFor] = useState<string | null>(null);
+
+  const handleSubmitAlt = (e: React.FormEvent) => {
+  e.preventDefault();
+  if (addingAltFor) {
+    const staff = staffMembers?.find(s => s.id === addingAltFor);
+    const currentAlts = (staff as any)?.altCharacters?.length || 0;
+
+    if (currentAlts >= 10) {
+      toast({
+        title: "Error",
+        description: "Maximum of 10 alt characters allowed per staff member",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    createAltMutation.mutate({
+      staffId: addingAltFor,
+      data: { ...altForm, staffMemberId: addingAltFor } as InsertAltCharacter
+    });
+  }
+};
 
   const createStaffMutation = useMutation({
     mutationFn: async (data: InsertStaffMember) => {
@@ -175,12 +198,10 @@ export default function StaffManagement() {
     }
   };
 
-  const filteredStaff = staffMembers?.filter(staff => {
-    const matchesSearch = staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         staff.role.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = departmentFilter === "all" || staff.department === departmentFilter;
-    return matchesSearch && matchesDepartment;
-  }) || [];
+const filteredStaff = staffMembers?.filter(staff => {
+  return staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         staff.role.toLowerCase().includes(searchTerm.toLowerCase());
+}) || [];
 
   if (isLoading) {
     return (
@@ -291,17 +312,6 @@ export default function StaffManagement() {
               className="flex-1"
               data-testid="input-search-staff"
             />
-            <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-              <SelectTrigger className="w-48" data-testid="select-filter-department">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
-                <SelectItem value="management">Management</SelectItem>
-                <SelectItem value="entertainment">Entertainment</SelectItem>
-                <SelectItem value="service">Service</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </CardContent>
       </Card>
@@ -437,6 +447,29 @@ export default function StaffManagement() {
                 data-testid="input-edit-staff-bio"
               />
             </div>
+            <td className="p-4">
+              <div className="flex items-center space-x-2">
+                {(staff as any).altCharacters?.length > 0 && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowingAltsFor(showingAltsFor === staff.id ? null : staff.id)}
+                    data-testid={`button-show-alts-${staff.id}`}
+                  >
+                    <Users className="w-4 h-4 mr-1" />
+                    {(staff as any).altCharacters?.length || 0} Alts
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setAddingAltFor(staff.id)}
+                  data-testid={`button-add-alt-${staff.id}`}
+                >
+                  <UserPlus className="w-4 h-4" />
+                </Button>
+              </div>
+            </td>
             <div>
               <Label htmlFor="edit-image">Image URL</Label>
               <Input

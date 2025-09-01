@@ -56,14 +56,27 @@ export default function ComponentPalette({ onAddComponent }: ComponentPalettePro
       case 'divider':
         return {
           ...baseComponent,
-          style: { color: 'border-border', thickness: '1px' }
-        };
+          content: { style: 'solid' },
+          style: {
+            color: 'border-border',
+            thickness: '1px'
+            margin: '20px 0'
+           }
+       };
       case 'grid':
-        return {
-          ...baseComponent,
-          content: { columns: 2 },
-          children: []
-        };
+  return {
+    ...baseComponent,
+    content: {
+      columns: 2,
+      gap: '16px'
+    },
+    children: [],
+    style: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, 1fr)',
+      gap: '16px'
+    }
+  };
       case 'hero':
         return {
           ...baseComponent,

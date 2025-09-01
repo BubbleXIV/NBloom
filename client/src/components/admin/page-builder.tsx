@@ -59,12 +59,15 @@ export default function PageBuilder() {
     });
   };
 
-  const addComponent = (component: PageComponent) => {
-    setPageContent(prev => ({
-      ...prev,
-      components: [...prev.components, { ...component, id: Date.now().toString() }]
-    }));
-  };
+const addComponent = (component: PageComponent) => {
+  setPageContent(prev => ({
+    ...prev,
+    components: [...prev.components, {
+      ...component,
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}` // More unique IDs
+    }]
+  }));
+};
 
   const updateComponent = (id: string, updates: Partial<PageComponent>) => {
     setPageContent(prev => ({
