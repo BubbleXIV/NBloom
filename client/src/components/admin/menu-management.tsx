@@ -21,8 +21,7 @@ export default function MenuManagement() {
     name: "",
     description: "",
     price: 0,
-    // category: "drinks", // REMOVE this line
-    ingredients: [],
+    ingredients: "",
     image: "",
     isAvailable: true,
     sortOrder: 0
@@ -86,8 +85,7 @@ export default function MenuManagement() {
       name: "",
       description: "",
       price: 0,
-      category: activeCategory,
-      ingredients: [],
+      ingredients: "",
       image: "",
       isAvailable: true,
       sortOrder: 0
@@ -101,8 +99,7 @@ export default function MenuManagement() {
       name: item.name,
       description: item.description || "",
       price: item.price,
-      category: item.category,
-      ingredients: item.ingredients || [],
+      ingredients: item.ingredients || "",
       image: item.image || "",
       isAvailable: item.isAvailable,
       sortOrder: item.sortOrder
@@ -120,18 +117,22 @@ export default function MenuManagement() {
 
   const addIngredient = () => {
     if (ingredientInput.trim()) {
+      const currentIngredients = itemForm.ingredients ? itemForm.ingredients.split(', ').filter(i => i.trim()) : [];
+      const newIngredients = [...currentIngredients, ingredientInput.trim()];
       setItemForm(prev => ({
         ...prev,
-        ingredients: [...(prev.ingredients || []), ingredientInput.trim()]
+        ingredients: newIngredients.join(', ')
       }));
       setIngredientInput("");
     }
   };
 
   const removeIngredient = (index: number) => {
+    const currentIngredients = itemForm.ingredients ? itemForm.ingredients.split(', ').filter(i => i.trim()) : [];
+    const newIngredients = currentIngredients.filter((_, i) => i !== index);
     setItemForm(prev => ({
       ...prev,
-      ingredients: prev.ingredients?.filter((_, i) => i !== index) || []
+      ingredients: newIngredients.join(', ')
     }));
   };
 
@@ -229,11 +230,11 @@ export default function MenuManagement() {
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {itemForm.ingredients?.map((ingredient, index) => (
+                  {itemForm.ingredients ? itemForm.ingredients.split(', ').filter(i => i.trim()).map((ingredient, index) => (
                     <Badge key={index} variant="secondary" className="cursor-pointer" onClick={() => removeIngredient(index)}>
                       {ingredient} ✕
                     </Badge>
-                  ))}
+                  )) : null}
                 </div>
               </div>
               <Button type="submit" disabled={createItemMutation.isPending} data-testid="button-submit-item">
@@ -281,10 +282,10 @@ export default function MenuManagement() {
             </CardHeader>
             <CardContent>
               {item.image && (
-                <img 
-                  src={item.image} 
-                  alt={item.name} 
-                  className="w-full h-32 object-cover rounded-lg mb-3" 
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-32 object-cover rounded-lg mb-3"
                 />
               )}
               {item.description && (
@@ -292,11 +293,11 @@ export default function MenuManagement() {
                   {item.description}
                 </p>
               )}
-              {item.ingredients && item.ingredients.length > 0 && (
+              {item.ingredients && item.ingredients.trim() && (
                 <div className="mb-3">
                   <p className="text-xs font-medium text-foreground mb-1">Ingredients:</p>
                   <div className="flex flex-wrap gap-1">
-                    {item.ingredients.map((ingredient, index) => (
+                    {item.ingredients.split(', ').filter(i => i.trim()).map((ingredient, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {ingredient}
                       </Badge>
@@ -305,7 +306,7 @@ export default function MenuManagement() {
                 </div>
               )}
               <div className="flex justify-between items-center">
-                <Badge 
+                <Badge
                   variant={item.isAvailable ? "default" : "secondary"}
                   data-testid={`badge-availability-${item.id}`}
                 >
@@ -336,19 +337,7 @@ export default function MenuManagement() {
                   data-testid="input-edit-item-name"
                 />
               </div>
-              <div>
-                <Label htmlFor="edit-category">Category</Label>
-                <Select value={itemForm.category} onValueChange={(value) => setItemForm(prev => ({ ...prev, category: value }))}>
-                  <SelectTrigger data-testid="select-edit-item-category">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="drinks">Beverages</SelectItem>
-                    <SelectItem value="food">Food</SelectItem>
-                    <SelectItem value="desserts">Desserts</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
             </div>
             <div>
               <Label htmlFor="edit-description">Description</Label>
@@ -405,11 +394,11 @@ export default function MenuManagement() {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {itemForm.ingredients?.map((ingredient, index) => (
+                {itemForm.ingredients ? itemForm.ingredients.split(', ').filter(i => i.trim()).map((ingredient, index) => (
                   <Badge key={index} variant="secondary" className="cursor-pointer" onClick={() => removeIngredient(index)}>
                     {ingredient} ✕
                   </Badge>
-                ))}
+                )) : null}
               </div>
             </div>
             <div className="flex items-center space-x-2">

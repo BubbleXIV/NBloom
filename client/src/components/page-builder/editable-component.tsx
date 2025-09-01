@@ -47,13 +47,31 @@ export default function EditableComponent({
         );
 
       case 'text':
+        const formatText = (text: string) => {
+          return text
+            .split('\n')
+            .map((line, index) => {
+              // Handle bold text with **text**
+              line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+              // Handle bullet points
+              if (line.trim().startsWith('•')) {
+                return `<li key="${index}" class="ml-4">${line.replace('•', '').trim()}</li>`;
+              }
+
+              return `<p key="${index}" class="mb-2">${line}</p>`;
+            })
+            .join('');
+        };
+
         return (
-          <p 
-            className={`${component.style?.color || 'text-muted-foreground'} leading-relaxed`}
+          <div
+            className={`${component.style?.color || 'text-muted-foreground'} leading-relaxed prose prose-sm max-w-none`}
             style={{ textAlign: component.style?.textAlign || 'left' }}
-          >
-            {component.content?.text || 'Text content...'}
-          </p>
+            dangerouslySetInnerHTML={{
+              __html: formatText(component.content?.text || 'Text content...')
+            }}
+          />
         );
 
       case 'image':
@@ -96,18 +114,18 @@ export default function EditableComponent({
 
       case 'divider':
         return (
-          <hr 
+          <hr
             className="border-0"
-            style={{ 
+            style={{
               borderTop: `${component.style?.thickness || '1px'} solid ${component.style?.color || 'hsl(var(--border))'}`,
               margin: '1rem 0'
-            }} 
+            }}
           />
         );
 
       case 'grid':
         return (
-          <div 
+          <div
             className="grid gap-4"
             style={{ gridTemplateColumns: `repeat(${component.content?.columns || 2}, 1fr)` }}
           >
@@ -139,17 +157,18 @@ export default function EditableComponent({
 
       case 'hero':
         return (
-          <div 
+          <div
             className="relative min-h-[400px] flex items-center justify-center text-center text-white rounded-lg overflow-hidden"
             style={{
               backgroundImage: component.content?.backgroundImage ? `url(${component.content.backgroundImage})` : 'linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #0F0F0F 100%)',
               backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              backgroundPosition: 'center',
+              minHeight: component.style?.minHeight || '400px'
             }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-50"></div>
             <div className="relative z-10 max-w-3xl mx-auto px-4">
-              <h1 className="font-display text-4xl md:text-6xl font-bold mb-4">
+              <h1 className="font-display text-4xl md:text-6xl font-bold mb-4 whitespace-pre-line">
                 {component.content?.title || 'Hero Title'}
               </h1>
               <p className="text-xl mb-8">
@@ -168,6 +187,73 @@ export default function EditableComponent({
               </div>
             </div>
           </div>
+        );
+
+      case 'features':
+        return (
+          <section className="py-20 bg-card/30">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="text-center mb-16">
+                <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
+                  {component.content?.title || 'Features'}
+                </h2>
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                  {component.content?.subtitle || 'Feature description'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {component.content?.features?.map((feature: any, index: number) => (
+                  <div key={index} className="card-hover bg-card border border-border rounded-xl p-8 text-center">
+                    <div className="w-16 h-16 gold-gradient rounded-full flex items-center justify-center mx-auto mb-6">
+                      <i className={`${feature.icon} text-2xl text-primary-foreground`}></i>
+                    </div>
+                    <h3 className="font-display text-2xl font-semibold text-foreground mb-4">{feature.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                  </div>
+                )) || (
+                  <div className="col-span-3 text-center text-muted-foreground">
+                    No features configured
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        );
+
+      case 'testimonials':
+        return (
+          <section className="py-20">
+            <div className="max-w-7xl mx-auto px-4">
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-center text-foreground mb-16">
+                {component.content?.title || 'Testimonials'}
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {component.content?.testimonials?.map((testimonial: any, index: number) => (
+                  <div key={index} className="bg-card border border-border rounded-xl p-6">
+                    <div className="flex text-primary mb-4">
+                      {Array.from({ length: testimonial.rating }).map((_, i) => (
+                        <i key={i} className="fas fa-star"></i>
+                      ))}
+                    </div>
+                    <p className="text-muted-foreground mb-6 italic">"{testimonial.text}"</p>
+                    <div className="flex items-center">
+                      <img src={testimonial.image} alt={testimonial.author} className="w-12 h-12 rounded-full mr-4 object-cover" />
+                      <div>
+                        <p className="font-semibold text-foreground">{testimonial.author}</p>
+                        <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                      </div>
+                    </div>
+                  </div>
+                )) || (
+                  <div className="col-span-3 text-center text-muted-foreground">
+                    No testimonials configured
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
         );
 
       default:

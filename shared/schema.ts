@@ -1,41 +1,41 @@
 import { sql, relations } from "drizzle-orm";
-import { pgTable, text, varchar, integer, boolean, timestamp, json } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer, blob, real } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { nanoid } from "nanoid";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey().$defaultFn(() => nanoid()),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   role: text("role").notNull().default("admin"),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const pages = pgTable("pages", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const pages = sqliteTable("pages", {
+  id: text("id").primaryKey().$defaultFn(() => nanoid()),
   slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
-  content: json("content").notNull(),
-  published: boolean("published").notNull().default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  content: text("content", { mode: "json" }).notNull(),
+  published: integer("published", { mode: "boolean" }).notNull().default(false),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const staffMembers = pgTable("staff_members", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const staffMembers = sqliteTable("staff_members", {
+  id: text("id").primaryKey().$defaultFn(() => nanoid()),
   name: text("name").notNull(),
   role: text("role").notNull(),
-  department: text("department").notNull(),
   image: text("image"),
   bio: text("bio"),
-  isActive: boolean("is_active").notNull().default(true),
+  isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
   sortOrder: integer("sort_order").notNull().default(0),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const altCharacters = pgTable("alt_characters", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  staffMemberId: varchar("staff_member_id").notNull().references(() => staffMembers.id, { onDelete: "cascade" }),
+export const altCharacters = sqliteTable("alt_characters", {
+  id: text("id").primaryKey().$defaultFn(() => nanoid()),
+  staffMemberId: text("staff_member_id").notNull().references(() => staffMembers.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   race: text("race"),
   server: text("server"),
@@ -43,27 +43,26 @@ export const altCharacters = pgTable("alt_characters", {
   sortOrder: integer("sort_order").notNull().default(0),
 });
 
-export const menuItems = pgTable("menu_items", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const menuItems = sqliteTable("menu_items", {
+  id: text("id").primaryKey().$defaultFn(() => nanoid()),
   name: text("name").notNull(),
   description: text("description"),
-  price: integer("price").notNull(),
-  category: text("category").notNull(), // drinks, food, desserts
-  ingredients: text("ingredients").array(),
+  price: real("price").notNull(),
+  ingredients: text("ingredients"),
   image: text("image"),
-  isAvailable: boolean("is_available").notNull().default(true),
+  isAvailable: integer("is_available", { mode: "boolean" }).notNull().default(true),
   sortOrder: integer("sort_order").notNull().default(0),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const mediaFiles = pgTable("media_files", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const mediaFiles = sqliteTable("media_files", {
+  id: text("id").primaryKey().$defaultFn(() => nanoid()),
   filename: text("filename").notNull(),
   originalName: text("original_name").notNull(),
   url: text("url").notNull(),
   type: text("type").notNull(), // image, video, document
   size: integer("size").notNull(),
-  uploadedAt: timestamp("uploaded_at").defaultNow(),
+  uploadedAt: text("uploaded_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
 // Relations

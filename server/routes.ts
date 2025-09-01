@@ -69,11 +69,11 @@ try {
   if (existingPages.length === 0) {
     // Create default pages
     const defaultPages = [
-      { title: 'Home', slug: 'home', content: '{"components":[]}', published: true },
-      { title: 'Services', slug: 'services', content: '{"components":[]}', published: true },
-      { title: 'Menu', slug: 'menu', content: '{"components":[]}', published: true },
-      { title: 'Staff', slug: 'staff', content: '{"components":[]}', published: true },
-      { title: 'Contact', slug: 'contact', content: '{"components":[]}', published: true }
+      { title: 'Home', slug: 'home', content: { components: [] }, published: true },
+      { title: 'Services', slug: 'services', content: { components: [] }, published: true },
+      { title: 'Menu', slug: 'menu', content: { components: [] }, published: true },
+      { title: 'Staff', slug: 'staff', content: { components: [] }, published: true },
+      { title: 'About', slug: 'about', content: { components: [] }, published: true }
     ];
 
     for (const page of defaultPages) {
@@ -97,7 +97,7 @@ try {
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { username, password } = req.body;
-      
+
       const user = await storage.getUserByUsername(username);
       if (!user) {
         return res.status(401).json({ message: 'Invalid credentials' });
@@ -283,10 +283,7 @@ try {
   // Menu routes
   app.get('/api/menu', async (req, res) => {
     try {
-      const category = req.query.category as string;
-      const items = category 
-        ? await storage.getMenuItemsByCategory(category)
-        : await storage.getMenuItems();
+      const items = await storage.getMenuItems();
       res.json(items);
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch menu items' });

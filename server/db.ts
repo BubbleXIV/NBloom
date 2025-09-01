@@ -21,8 +21,8 @@ sqlite.exec(`
     id TEXT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    role TEXT DEFAULT 'user',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    role TEXT DEFAULT 'admin',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
   )
 `);
 
@@ -31,10 +31,10 @@ sqlite.exec(`
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL,
-    content TEXT,
-    published BOOLEAN DEFAULT false,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    content TEXT NOT NULL,
+    published INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
   )
 `);
 
@@ -43,12 +43,11 @@ sqlite.exec(`
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     role TEXT NOT NULL,
-    department TEXT NOT NULL,
     bio TEXT,
     image TEXT,
-    is_active BOOLEAN DEFAULT true,
+    is_active INTEGER DEFAULT 1,
     sort_order INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
   )
 `);
 
@@ -70,11 +69,12 @@ sqlite.exec(`
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
-    price REAL,
-    category TEXT NOT NULL,
+    price REAL NOT NULL,
+    ingredients TEXT,
     image TEXT,
-    is_available BOOLEAN DEFAULT true,
-    sort_order INTEGER DEFAULT 0
+    is_available INTEGER DEFAULT 1,
+    sort_order INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
   )
 `);
 
@@ -86,6 +86,6 @@ sqlite.exec(`
     url TEXT NOT NULL,
     type TEXT NOT NULL,
     size INTEGER DEFAULT 0,
-    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    uploaded_at TEXT DEFAULT CURRENT_TIMESTAMP
   )
 `);

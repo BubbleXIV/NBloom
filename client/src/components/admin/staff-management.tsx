@@ -26,7 +26,6 @@ export default function StaffManagement() {
   const [staffForm, setStaffForm] = useState<Partial<InsertStaffMember>>({
     name: "",
     role: "",
-    department: "management",
     bio: "",
     image: "",
     isActive: true,
@@ -127,7 +126,6 @@ export default function StaffManagement() {
     setStaffForm({
       name: "",
       role: "",
-      department: "management",
       bio: "",
       image: "",
       isActive: true,
@@ -150,7 +148,6 @@ export default function StaffManagement() {
     setStaffForm({
       name: staff.name,
       role: staff.role,
-      department: staff.department,
       bio: staff.bio || "",
       image: staff.image || "",
       isActive: staff.isActive,
@@ -164,6 +161,16 @@ export default function StaffManagement() {
       updateStaffMutation.mutate({ id: editingStaff.id, data: staffForm as InsertStaffMember });
     } else {
       createStaffMutation.mutate(staffForm as InsertStaffMember);
+    }
+  };
+
+  const handleSubmitAlt = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (addingAltFor) {
+      createAltMutation.mutate({
+        staffId: addingAltFor,
+        data: altForm as InsertAltCharacter
+      });
     }
   };
 
@@ -220,15 +227,7 @@ const filteredStaff = staffMembers?.filter(staff => {
                   data-testid="input-staff-role"
                 />
               </div>
-              <div>
-                <Label htmlFor="department">Department (Auto-assigned by Role)</Label>
-                <Input
-                  id="department"
-                  value={staffForm.department || "management"}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
+
               <div>
                 <Label htmlFor="bio">Bio</Label>
                 <Textarea
@@ -286,7 +285,7 @@ const filteredStaff = staffMembers?.filter(staff => {
                 <tr>
                   <th className="text-left p-4 font-semibold text-foreground">Character</th>
                   <th className="text-left p-4 font-semibold text-foreground">Role</th>
-                  <th className="text-left p-4 font-semibold text-foreground">Department</th>
+
                   <th className="text-left p-4 font-semibold text-foreground">Alt Characters</th>
                   <th className="text-left p-4 font-semibold text-foreground">Status</th>
                   <th className="text-left p-4 font-semibold text-foreground">Actions</th>
@@ -297,10 +296,10 @@ const filteredStaff = staffMembers?.filter(staff => {
                   <tr key={staff.id} className="border-b border-border" data-testid={`row-staff-${staff.id}`}>
                     <td className="p-4">
                       <div className="flex items-center">
-                        <img 
-                          src={staff.image || "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"} 
-                          alt={staff.name} 
-                          className="w-10 h-10 rounded-full mr-3 object-cover" 
+                        <img
+                          src={staff.image || "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"}
+                          alt={staff.name}
+                          className="w-10 h-10 rounded-full mr-3 object-cover"
                         />
                         <div>
                           <p className="font-semibold text-foreground" data-testid={`text-staff-name-${staff.id}`}>{staff.name}</p>
@@ -309,7 +308,7 @@ const filteredStaff = staffMembers?.filter(staff => {
                       </div>
                     </td>
                     <td className="p-4 text-foreground" data-testid={`text-staff-role-${staff.id}`}>{staff.role}</td>
-                    <td className="p-4 text-foreground" data-testid={`text-staff-department-${staff.id}`}>{staff.department}</td>
+
                     <td className="p-4">
                       <div className="flex items-center space-x-2">
                         <Button
@@ -324,7 +323,7 @@ const filteredStaff = staffMembers?.filter(staff => {
                       </div>
                     </td>
                     <td className="p-4">
-                      <Badge 
+                      <Badge
                         variant={staff.isActive ? "default" : "secondary"}
                         data-testid={`badge-status-${staff.id}`}
                       >
@@ -387,19 +386,7 @@ const filteredStaff = staffMembers?.filter(staff => {
                 data-testid="input-edit-staff-role"
               />
             </div>
-            <div>
-              <Label htmlFor="edit-department">Department</Label>
-              <Select value={staffForm.department} onValueChange={(value) => setStaffForm(prev => ({ ...prev, department: value }))}>
-                <SelectTrigger data-testid="select-edit-staff-department">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="management">Management</SelectItem>
-                  <SelectItem value="entertainment">Entertainment</SelectItem>
-                  <SelectItem value="service">Service</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
             <div>
               <Label htmlFor="edit-bio">Bio</Label>
               <Textarea
@@ -409,29 +396,7 @@ const filteredStaff = staffMembers?.filter(staff => {
                 data-testid="input-edit-staff-bio"
               />
             </div>
-            <td className="p-4">
-              <div className="flex items-center space-x-2">
-                {(staff as any).altCharacters?.length > 0 && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setShowingAltsFor(showingAltsFor === staff.id ? null : staff.id)}
-                    data-testid={`button-show-alts-${staff.id}`}
-                  >
-                    <Users className="w-4 h-4 mr-1" />
-                    {(staff as any).altCharacters?.length || 0} Alts
-                  </Button>
-                )}
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setAddingAltFor(staff.id)}
-                  data-testid={`button-add-alt-${staff.id}`}
-                >
-                  <UserPlus className="w-4 h-4" />
-                </Button>
-              </div>
-            </td>
+
             <div>
               <Label htmlFor="edit-image">Image URL</Label>
               <Input

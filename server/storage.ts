@@ -35,11 +35,10 @@ export interface IStorage {
   
   // Menu methods
   getMenuItems(): Promise<MenuItem[]>;
-  getMenuItemsByCategory(category: string): Promise<MenuItem[]>;
   createMenuItem(item: InsertMenuItem): Promise<MenuItem>;
   updateMenuItem(id: string, item: Partial<InsertMenuItem>): Promise<MenuItem>;
   deleteMenuItem(id: string): Promise<void>;
-  
+
   // Media methods
   getMediaFiles(): Promise<MediaFile[]>;
   createMediaFile(file: InsertMediaFile): Promise<MediaFile>;
@@ -150,13 +149,7 @@ export class DatabaseStorage implements IStorage {
 
   // Menu methods
   async getMenuItems(): Promise<MenuItem[]> {
-    return await db.select().from(menuItems).orderBy(menuItems.category, menuItems.sortOrder);
-  }
-
-  async getMenuItemsByCategory(category: string): Promise<MenuItem[]> {
-    return await db.select().from(menuItems)
-      .where(and(eq(menuItems.category, category), eq(menuItems.isAvailable, true)))
-      .orderBy(menuItems.sortOrder);
+    return await db.select().from(menuItems).orderBy(menuItems.sortOrder);
   }
 
   async createMenuItem(item: InsertMenuItem): Promise<MenuItem> {

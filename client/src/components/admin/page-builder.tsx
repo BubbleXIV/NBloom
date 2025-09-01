@@ -1,4 +1,5 @@
 import { useState } from "react";
+import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,6 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import ComponentPalette from "@/components/page-builder/component-palette";
 import EditableComponent from "@/components/page-builder/editable-component";
 import type { Page, PageContent, PageComponent } from "@/types";
+import { convertHomePageToComponents, convertServicesPageToComponents, convertAboutPageToComponents } from "@/utils/page-converter";
 
 export default function PageBuilder() {
   const [selectedPageId, setSelectedPageId] = useState<string>("");
@@ -21,8 +23,57 @@ export default function PageBuilder() {
 
   const { data: selectedPage } = useQuery<Page>({
     queryKey: ['/api/admin/pages', selectedPageId],
-    enabled: !!selectedPageId,
+    enabled: !!selectedPageId && selectedPageId !== 'new',
+    queryFn: async () => {
+      const foundPage = pages?.find(p => p.id === selectedPageId);
+      if (foundPage) {
+        return foundPage;
+      }
+      // If not found in the list, could fetch individual page
+      return null;
+    }
   });
+
+  // Load page content when a page is selected
+  React.useEffect(() => {
+    if (selectedPage && selectedPage.content) {
+      setPageContent(selectedPage.content);
+    } else if (selectedPageId && selectedPageId !== 'new') {
+      // If no content exists, initialize with empty components
+      setPageContent({ components: [] });
+    }
+  }, [selectedPage, selectedPageId]);
+
+  const convertPageToComponents = () => {
+    if (!selectedPage) {
+      console.error('No selected page');
+      return;
+    }
+
+    console.log('Converting page:', selectedPage.slug);
+
+    let convertedContent: PageContent;
+
+    switch (selectedPage.slug) {
+      case 'home':
+        convertedContent = convertHomePageToComponents();
+        break;
+      case 'services':
+        convertedContent = convertServicesPageToComponents();
+        break;
+      case 'about':
+        convertedContent = convertAboutPageToComponents();
+        break;
+      default:
+        convertedContent = { components: [] };
+    }
+
+    console.log('Converted content:', convertedContent);
+    setPageContent(convertedContent);
+
+    // Auto-save the converted content
+    updatePageMutation.mutate({ id: selectedPage.id, content: convertedContent });
+  };
 
   const updatePageMutation = useMutation({
     mutationFn: async ({ id, content }: { id: string; content: PageContent }) => {
@@ -53,9 +104,9 @@ export default function PageBuilder() {
 
   const handlePublish = () => {
     if (!selectedPageId) return;
-    updatePageMutation.mutate({ 
-      id: selectedPageId, 
-      content: pageContent 
+    updatePageMutation.mutate({
+      id: selectedPageId,
+      content: pageContent
     });
   };
 
@@ -73,7 +124,7 @@ const addComponent = (component: PageComponent) => {
   const updateComponent = (id: string, updates: Partial<PageComponent>) => {
     setPageContent(prev => ({
       ...prev,
-      components: prev.components.map(comp => 
+      components: prev.components.map(comp =>
         comp.id === id ? { ...comp, ...updates } : comp
       )
     }));
@@ -115,7 +166,7 @@ const addComponent = (component: PageComponent) => {
             </SelectContent>
           </Select>
         </div>
-        
+
         <ComponentPalette onAddComponent={addComponent} />
       </div>
 
@@ -152,6 +203,16 @@ const addComponent = (component: PageComponent) => {
             </div>
           </div>
           <div className="flex space-x-2">
+            {selectedPageId && selectedPageId !== 'new' && pageContent.components.length === 0 && (
+              <Button
+                variant="outline"
+                onClick={convertPageToComponents}
+                disabled={updatePageMutation.isPending}
+                data-testid="button-convert-page"
+              >
+                <i className="fas fa-magic mr-2"></i>Convert to Editable
+              </Button>
+            )}
             <Button
               variant="secondary"
               onClick={handleSaveDraft}
