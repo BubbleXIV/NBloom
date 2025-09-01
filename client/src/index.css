@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 4%);
+  --foreground: hsl(0, 0%, 98%);
+  --card: hsl(0, 0%, 8%);
+  --card-foreground: hsl(0, 0%, 95%);
+  --popover: hsl(0, 0%, 8%);
+  --popover-foreground: hsl(0, 0%, 95%);
+  --primary: hsl(45, 85%, 55%);
+  --primary-foreground: hsl(0, 0%, 9%);
+  --secondary: hsl(45, 20%, 25%);
+  --secondary-foreground: hsl(45, 60%, 80%);
+  --muted: hsl(0, 0%, 12%);
+  --muted-foreground: hsl(0, 0%, 65%);
+  --accent: hsl(45, 100%, 70%);
+  --accent-foreground: hsl(0, 0%, 9%);
+  --destructive: hsl(356, 91%, 54%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(45, 30%, 30%);
+  --input: hsl(0, 0%, 12%);
+  --ring: hsl(45, 85%, 55%);
+  --chart-1: hsl(45, 85%, 55%);
+  --chart-2: hsl(160, 100%, 36%);
+  --chart-3: hsl(42, 93%, 56%);
+  --chart-4: hsl(147, 79%, 42%);
+  --chart-5: hsl(341, 75%, 51%);
+  --sidebar: hsl(0, 0%, 8%);
+  --sidebar-foreground: hsl(0, 0%, 95%);
+  --sidebar-primary: hsl(45, 85%, 55%);
+  --sidebar-primary-foreground: hsl(0, 0%, 9%);
+  --sidebar-accent: hsl(45, 30%, 30%);
+  --sidebar-accent-foreground: hsl(45, 85%, 55%);
+  --sidebar-border: hsl(45, 30%, 30%);
+  --sidebar-ring: hsl(45, 85%, 55%);
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Playfair Display", serif;
+  --font-accent: "Cinzel", serif;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: hsl(0, 0%, 4%);
+  --foreground: hsl(0, 0%, 98%);
+  --card: hsl(0, 0%, 8%);
+  --card-foreground: hsl(0, 0%, 95%);
+  --popover: hsl(0, 0%, 8%);
+  --popover-foreground: hsl(0, 0%, 95%);
+  --primary: hsl(45, 85%, 55%);
+  --primary-foreground: hsl(0, 0%, 9%);
+  --secondary: hsl(45, 20%, 25%);
+  --secondary-foreground: hsl(45, 60%, 80%);
+  --muted: hsl(0, 0%, 12%);
+  --muted-foreground: hsl(0, 0%, 65%);
+  --accent: hsl(45, 100%, 70%);
+  --accent-foreground: hsl(0, 0%, 9%);
+  --destructive: hsl(356, 91%, 54%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(45, 30%, 30%);
+  --input: hsl(0, 0%, 12%);
+  --ring: hsl(45, 85%, 55%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    background: linear-gradient(135deg, #0A0A0A 0%, #121212 50%, #0F0F0F 100%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .brushed-bg {
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #0F0F0F 100%);
+  }
+
+  .gold-gradient {
+    background: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%);
+  }
+
+  .gold-border {
+    border-image: linear-gradient(135deg, #D4AF37, #FFD700, #B8860B) 1;
+  }
+
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+  }
+
+  .nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #D4AF37, #FFD700);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  .admin-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+  }
+
+  .page-editor {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+  }
+
+  .component-palette {
+    background: linear-gradient(135deg, #0F0F0F 0%, #1F1F1F 100%);
+  }
+
+  .preview-frame {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-accent {
+    font-family: var(--font-accent);
+  }
+}
