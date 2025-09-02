@@ -65,29 +65,62 @@ export class DatabaseStorage implements IStorage {
   // Page methods
   async getPage(slug: string): Promise<Page | undefined> {
     const [page] = await db.select().from(pages).where(eq(pages.slug, slug));
-    return page || undefined;
+    if (!page) return undefined;
+
+    // Parse JSON content if it's a string
+    return {
+      ...page,
+      content: typeof page.content === 'string' ? JSON.parse(page.content) : page.content
+    };
   }
 
   async getPages(): Promise<Page[]> {
-    return await db.select().from(pages);
+    const allPages = await db.select().from(pages);
+    return allPages.map(page => ({
+      ...page,
+      content: typeof page.content === 'string' ? JSON.parse(page.content) : page.content
+    }));
   }
 
   async getPublishedPages(): Promise<Page[]> {
-    return await db.select().from(pages).where(eq(pages.published, true));
+    const allPages = await db.select().from(pages).where(eq(pages.published, true));
+    return allPages.map(page => ({
+      ...page,
+      content: typeof page.content === 'string' ? JSON.parse(page.content) : page.content
+    }));
   }
 
   async createPage(page: InsertPage): Promise<Page> {
-    const [newPage] = await db.insert(pages).values(page).returning();
-    return newPage;
+    const pageData = {
+      ...page,
+      content: typeof page.content === 'string' ? page.content : JSON.stringify(page.content)
+    };
+
+    const [newPage] = await db.insert(pages).values(pageData).returning();
+    return {
+      ...newPage,
+      content: typeof newPage.content === 'string' ? JSON.parse(newPage.content) : newPage.content
+    };
   }
 
   async updatePage(id: string, page: Partial<InsertPage>): Promise<Page> {
+    const updateData = { ...page };
+
+    // Ensure content is serialized as JSON string if provided
+    if (updateData.content !== undefined) {
+      updateData.content = typeof updateData.content === 'string' ? updateData.content : JSON.stringify(updateData.content);
+    }
+
     const [updatedPage] = await db
       .update(pages)
-      .set({ ...page, updatedAt: new Date() })
+      .set({ ...updateData, updatedAt: new Date().toISOString() })
       .where(eq(pages.id, id))
       .returning();
-    return updatedPage;
+
+    return {
+      ...updatedPage,
+      content: typeof updatedPage.content === 'string' ? JSON.parse(updatedPage.content) : updatedPage.content
+    };
   }
 
   async deletePage(id: string): Promise<void> {

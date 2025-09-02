@@ -1,8 +1,39 @@
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import { Link } from "wouter";
+import EditableComponent from "@/components/page-builder/editable-component";
+import type { Page } from "@/types";
 
 export default function Home() {
+  const { data: pageData } = useQuery<Page>({
+    queryKey: ['/api/pages/home'],
+  });
+
+  // If page has editable content and components, render them
+  if (pageData?.content?.components && pageData.content.components.length > 0) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <main>
+          {pageData.content.components.map((component) => (
+            <div key={component.id} className="component-wrapper">
+              <EditableComponent
+                component={component}
+                onUpdate={() => {}} // Read-only on public page
+                onDelete={() => {}}
+                onMoveUp={() => {}}
+                onMoveDown={() => {}}
+              />
+            </div>
+          ))}
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Fallback to hardcoded content if no editable content exists
   return (
     <div className="min-h-screen">
       <Navbar />

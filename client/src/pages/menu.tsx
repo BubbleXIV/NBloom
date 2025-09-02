@@ -98,7 +98,7 @@ export default function Menu() {
                             <p className="text-muted-foreground text-sm mb-2" data-testid={`text-item-description-${item.id}`}>{item.description}</p>
                             {item.ingredients && item.ingredients.length > 0 && (
                               <p className="text-xs text-muted-foreground italic" data-testid={`text-item-ingredients-${item.id}`}>
-                                {item.ingredients.join(', ')}
+                                {Array.isArray(item.ingredients) ? item.ingredients.join(', ') : item.ingredients}
                               </p>
                             )}
                           </div>

@@ -169,7 +169,13 @@ try {
 
   app.post('/api/admin/pages', requireAuth, async (req, res) => {
     try {
-      const pageData = insertPageSchema.parse(req.body);
+      const { title, slug, content, published } = req.body;
+      const pageData = {
+        title,
+        slug,
+        content: typeof content === 'string' ? content : JSON.stringify(content),
+        published: published || false
+      };
       const page = await storage.createPage(pageData);
       res.json(page);
     } catch (error) {
@@ -185,7 +191,10 @@ try {
 
       if (title !== undefined) pageData.title = title;
       if (slug !== undefined) pageData.slug = slug;
-      if (content !== undefined) pageData.content = content;
+      if (content !== undefined) {
+        // Ensure content is properly serialized as JSON string for SQLite
+        pageData.content = typeof content === 'string' ? content : JSON.stringify(content);
+      }
       if (published !== undefined) pageData.published = published;
 
       const page = await storage.updatePage(req.params.id, pageData);
